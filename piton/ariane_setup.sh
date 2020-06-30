@@ -74,18 +74,20 @@ export PITON_ROOT=`pwd`
 ## GCC and RISCV GCC setup
 export CXX=g++-7 CC=gcc-7
 # customize this to a fast local disk
-export RISCV=/home/ee475/local64/                       #/scratch/$USER/riscv_install
-export VERILATOR_ROOT=$TOP/verilator-4.014/
+export ARIANE_ROOT=${PITON_ROOT}/piton/design/chip/tile/ariane/
+export RISCV=$ARIANE_ROOT/tmp/riscv_install                       
+export VERILATOR_ROOT=$ARIANE_ROOT/tmp/verilator-4.014/
 
-export DTC_ROOT=/home/cgrimm/ele575_grimm/finalProj/dtc-1.5.1/
+export DTC_ROOT=/usr/bin/
 
 # setup paths
-export PATH=$RISCV/bin:$VERILATOR_ROOT/bin:$DTC_ROOT:$PATH
+#export PATH=$RISCV/bin:$VERILATOR_ROOT/bin:$DTC_ROOT:$PATH
+export PATH=$RISCV/bin:$VERILATOR_ROOT/bin:$PATH
 export LIBRARY_PATH=$RISCV/lib
 export LD_LIBRARY_PATH=$RISCV/lib
 export C_INCLUDE_PATH=$RISCV/include:$VERILATOR_ROOT/include
 export CPLUS_INCLUDE_PATH=$RISCV/include:$VERILATOR_ROOT/include
-export ARIANE_ROOT=${PITON_ROOT}/piton/design/chip/tile/ariane/
+
 
 # source OpenPiton setup script
 # note: customize this script to reflect your tool setup
