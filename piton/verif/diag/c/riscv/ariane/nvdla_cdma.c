@@ -33,6 +33,6 @@ int main(int argc, char ** argv) {
   *(BASE_ADDR + CDMA_D_OP_ENABLE) = 1; // kick off execution
   printf("Started execution\nWaiting for completion\n");
   while (*(BASE_ADDR + CDMA_D_OP_ENABLE)); //wait for hardware to de-enable
-  printf("TEST PASSED\n")
+  printf("TEST PASSED\n");
   return 0;
 }
