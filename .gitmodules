@@ -3,11 +3,10 @@
 	url = https://github.com/pulp-platform/ariane.git
 [submodule "aws"]
 	path = piton/design/aws
-	url = git@github.com:PrincetonUniversity/openpiton-aws.git
+	url = https://github.com/PrincetonUniversity/openpiton-aws.git
 [submodule "piton/design/chipset/axi2apb"]
 	path = piton/design/chipset/axi2apb
 	url = https://github.com/pulp-platform/axi2apb.git
 [submodule "piton/design/nvdla/hw"]
         path = piton/design/nvdla/hw
         url = https://github.com/nvdla/hw.git
-
