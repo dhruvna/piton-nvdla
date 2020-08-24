@@ -42,36 +42,34 @@ module nvlink_top #(
     parameter SWAP_ENDIANESS = 1
 ) (
    //General signal imputs
-    input 			  chipset_clk,
+    input  chipset_clk,
 
-    input 			  rst_n,
+    input  rst_n,
 
-    output 			  net_interrupt,
+    output net_interrupt,
 
    //Inputs to identify NVDLA position
-    input [`NOC_CHIPID_WIDTH-1:0] chip_id,
-    input [`NOC_X_WIDTH -1:0] 	  x_id,
-    input [`NOC_Y_WIDTH -1:0] 	  y_id,
+    input [`NOC_CHIPID_WIDTH-1:0] 	chip_id,
+    input [`NOC_X_WIDTH -1:0] 	x_id,
+    input [`NOC_Y_WIDTH -1:0] 	y_id,
 
    //CPU master signals for NVDLA configuration interface
-    input 			  noc2_in_val,
-    input [`NOC_DATA_WIDTH-1:0]   noc2_in_data,
-    output 			  noc2_in_rdy,
+    input 			  	noc2_in_val,
+    input [`NOC_DATA_WIDTH-1:0]	noc2_in_data,
+    output 			  	noc2_in_rdy,
 
-    output 			  noc3_out_val,
-    output [`NOC_DATA_WIDTH-1:0]  noc3_out_data,
-    input 			  noc3_out_rdy,
+    output 			  	noc3_out_val,
+    output [`NOC_DATA_WIDTH-1:0]  	noc3_out_data,
+    input 			  	noc3_in_rdy,
 
    //NVDLA master signals for Memory block interface
-    output 			  noc2_out_val,
-    output [`NOC_DATA_WIDTH-1:0]  noc2_out_data,
-    input 			  noc2_out_rdy,
+    output 			  	noc2_out_val,
+    output [`NOC_DATA_WIDTH-1:0]  	noc2_out_data,
+    input 			  	noc2_out_rdy,
 
-    input 			  noc3_in_val,
-    input [`NOC_DATA_WIDTH-1:0]   noc3_in_data,
-    output 			  noc3_in_rdy
-
-
+    input 			  	noc3_in_val,
+    input [`NOC_DATA_WIDTH-1:0]   	noc3_in_data,
+    output      			noc3_out_rdy
 
 );
 
@@ -210,130 +208,187 @@ noc_axilite_bridge #(
 
 
 //AXILITE -->APB
-axi2apb #(
-            .AXI4_ADDRESS_WIDTH ( AXI_ADDR_WIDTH ),
-            .AXI4_RDATA_WIDTH   ( AXI_DATA_WIDTH ),
-            .AXI4_WDATA_WIDTH   ( AXI_DATA_WIDTH ),
-            .AXI4_ID_WIDTH      ( AXI_ID_WIDTH   ),
-            .AXI4_USER_WIDTH    ( AXI_USER_WIDTH ),
+//axi2apb #(
+//            .AXI4_ADDRESS_WIDTH ( AXI_ADDR_WIDTH ),
+//            .AXI4_RDATA_WIDTH   ( AXI_DATA_WIDTH ),
+//            .AXI4_WDATA_WIDTH   ( AXI_DATA_WIDTH ),
+//            .AXI4_ID_WIDTH      ( AXI_ID_WIDTH   ),
+//            .AXI4_USER_WIDTH    ( AXI_USER_WIDTH ),
 
-            .BUFF_DEPTH_SLAVE   ( 2              ),
-            .APB_ADDR_WIDTH     ( APB_ADDR_WIDTH )
-        ) axi2apb_nvlink (
-            .ACLK       ( chipset_clk            ),
-            .ARESETn    ( rst_n                 ),
-            .test_en_i  ( test_en_i              ), 
+//            .BUFF_DEPTH_SLAVE   ( 2              ),
+//            .APB_ADDR_WIDTH     ( APB_ADDR_WIDTH )
+//        ) axi2apb_nvlink (
+//            .ACLK       ( chipset_clk            ),
+//            .ARESETn    ( rst_n                 ),
+//            .test_en_i  ( test_en_i              ), 
 
-            .AWID_i     ( blank_id               ), 
-            .AWADDR_i   ( apb_axi_awaddr         ),
-            .AWLEN_i    ( blank_len              ), 
-            .AWSIZE_i   ( blank_size             ), 
-            .AWBURST_i  ( blank_burst            ), 
-            .AWLOCK_i   ( blank_lock             ),
-            .AWCACHE_i  ( blank_cache            ),
-            .AWPROT_i   ( blank_prot             ),
-            .AWREGION_i ( blank_region           ),
-            .AWUSER_i   ( blank_user             ),
-            .AWQOS_i    ( blank_qos              ),
-            .AWVALID_i  ( apb_axi_awvalid        ),
-            .AWREADY_o  ( apb_axi_awready        ),
+//            .AWID_i     ( blank_id               ), 
+//            .AWADDR_i   ( apb_axi_awaddr         ),
+//            .AWLEN_i    ( blank_len              ), 
+//            .AWSIZE_i   ( blank_size             ), 
+//            .AWBURST_i  ( blank_burst            ), 
+//            .AWLOCK_i   ( blank_lock             ),
+//            .AWCACHE_i  ( blank_cache            ),
+//            .AWPROT_i   ( blank_prot             ),
+//            .AWREGION_i ( blank_region           ),
+//            .AWUSER_i   ( blank_user             ),
+//            .AWQOS_i    ( blank_qos              ),
+//            .AWVALID_i  ( apb_axi_awvalid        ),
+//            .AWREADY_o  ( apb_axi_awready        ),
 
-            .WDATA_i    ( apb_axi_wdata          ),
-            .WSTRB_i    ( apb_axi_wstrb          ),
-            .WLAST_i    ( blank_last             ),
-            .WUSER_i    ( blank_user             ),
-            .WVALID_i   ( apb_axi_wvalid         ),
-            .WREADY_o   ( apb_axi_wready         ),
+//            .WDATA_i    ( apb_axi_wdata          ),
+//            .WSTRB_i    ( apb_axi_wstrb          ),
+//            .WLAST_i    ( blank_last             ),
+//            .WUSER_i    ( blank_user             ),
+//            .WVALID_i   ( apb_axi_wvalid         ),
+//            .WREADY_o   ( apb_axi_wready         ),
 
-            .BID_o      ( b_dump_id              ),
-            .BRESP_o    ( apb_axi_bresp          ),
-            .BVALID_o   ( apb_axi_bvalid         ),
-            .BUSER_o    ( b_dump_user            ),
-            .BREADY_i   ( apb_axi_bready         ),
+//            .BID_o      ( b_dump_id              ),
+//            .BRESP_o    ( apb_axi_bresp          ),
+//            .BVALID_o   ( apb_axi_bvalid         ),
+//            .BUSER_o    ( b_dump_user            ),
+//            .BREADY_i   ( apb_axi_bready         ),
 
-            .ARID_i     ( blank_id               ),
-            .ARADDR_i   ( apb_axi_araddr         ),
-            .ARLEN_i    ( blank_len              ),
-            .ARSIZE_i   ( blank_size             ),
-            .ARBURST_i  ( blank_burst            ),
-            .ARLOCK_i   ( blank_lock             ),
-            .ARCACHE_i  ( blank_cache            ),
-            .ARPROT_i   ( blank_prot             ),
-            .ARREGION_i ( blank_region           ),
-            .ARUSER_i   ( blank_user             ),
-            .ARQOS_i    ( blank_qos              ),
-            .ARVALID_i  ( apb_axi_arvalid        ),
-            .ARREADY_o  ( apb_axi_arready        ),
+//            .ARID_i     ( blank_id               ),
+//            .ARADDR_i   ( apb_axi_araddr         ),
+//            .ARLEN_i    ( blank_len              ),
+//            .ARSIZE_i   ( blank_size             ),
+//            .ARBURST_i  ( blank_burst            ),
+//            .ARLOCK_i   ( blank_lock             ),
+//            .ARCACHE_i  ( blank_cache            ),
+//            .ARPROT_i   ( blank_prot             ),
+//            .ARREGION_i ( blank_region           ),
+//            .ARUSER_i   ( blank_user             ),
+//            .ARQOS_i    ( blank_qos              ),
+//            .ARVALID_i  ( apb_axi_arvalid        ),
+//            .ARREADY_o  ( apb_axi_arready        ),
 
-            .RID_o      ( r_dump_id              ),
-            .RDATA_o    ( apb_axi_rdata          ),
-            .RRESP_o    ( apb_axi_rresp          ),
-            .RLAST_o    ( r_dump_last            ),
-            .RUSER_o    ( r_dump_user            ),
-            .RVALID_o   ( apb_axi_rvalid         ),
-            .RREADY_i   ( apb_axi_rready         ),
+//            .RID_o      ( r_dump_id              ),
+//            .RDATA_o    ( apb_axi_rdata          ),
+//            .RRESP_o    ( apb_axi_rresp          ),
+//            .RLAST_o    ( r_dump_last            ),
+//            .RUSER_o    ( r_dump_user            ),
+//            .RVALID_o   ( apb_axi_rvalid         ),
+//            .RREADY_i   ( apb_axi_rready         ),
 
-            .PENABLE    ( penable                ),
-            .PWRITE     ( pwrite                 ),
-            .PADDR      ( paddr                  ),
-            .PSEL       ( psel                   ),
-            .PWDATA     ( pwdata                 ),
-            .PRDATA     ( prdata                 ),
-            .PREADY     ( pready                 ),
-            .PSLVERR    ( pslverr                )
+//            .PENABLE    ( penable                ),
+//            .PWRITE     ( pwrite                 ),
+//            .PADDR      ( paddr                  ),
+//            .PSEL       ( psel                   ),
+//            .PWDATA     ( pwdata                 ),
+//            .PRDATA     ( prdata                 ),
+//            .PREADY     ( pready                 ),
+//            .PSLVERR    ( pslverr                )
+//        );
+        
+axi2apb axi2apb_nvlink (
+            .clk      ( chipset_clk            ),
+            .reset    ( ~rst_n                 ),
+
+            .AWID     ( blank_id               ), 
+            .AWADDR   ( apb_axi_awaddr         ),
+            .AWLEN    ( blank_len              ), 
+            .AWSIZE   ( blank_size             ), 
+            .AWVALID  ( apb_axi_awvalid        ),
+            .AWREADY  ( apb_axi_awready        ),
+
+            .WDATA    ( apb_axi_wdata          ),
+            .WSTRB    ( apb_axi_wstrb          ),
+            .WLAST    ( blank_last             ),
+            .WVALID   ( apb_axi_wvalid         ),
+            .WREADY   ( apb_axi_wready         ),
+
+            .BID      ( b_dump_id              ),
+            .BRESP    ( apb_axi_bresp          ),
+            .BVALID   ( apb_axi_bvalid         ),
+            .BREADY   ( apb_axi_bready         ),
+
+            .ARID     ( blank_id               ),
+            .ARADDR   ( apb_axi_araddr         ),
+            .ARLEN    ( blank_len              ),
+            .ARSIZE   ( blank_size             ),
+            .ARVALID  ( apb_axi_arvalid        ),
+            .ARREADY  ( apb_axi_arready        ),
+
+            .RID      ( r_dump_id              ),
+            .RDATA    ( apb_axi_rdata          ),
+            .RRESP    ( apb_axi_rresp          ),
+            .RLAST    ( r_dump_last            ),
+            .RVALID   ( apb_axi_rvalid         ),
+            .RREADY   ( apb_axi_rready         ),
+
+            .penable    ( penable                ),
+            .pwrite     ( pwrite                 ),
+            .paddr      ( paddr                  ),
+            .psel       ( psel                   ),
+            .pwdata     ( pwdata                 ),
+            .prdata     ( prdata                 ),
+            .pready     ( pready                 ),
+            .pslverr    ( pslverr                )
         );
 
    
-   //AXILITE --> CPU
-   //This bridge does not fully work.
+//AXILITE --> CPU
+//This bridge does not fully work.
+
 axilite_noc_bridge #(
-    .SLAVE_RESP_BYTEWIDTH   (4),
-    .SWAP_ENDIANESS         (SWAP_ENDIANESS),
-    .NOCDECODER_DP_DATA_WIDTH (4)
+    .AXI_LITE_DATA_WIDTH (64)
 )  nvlink_noc_bridge (
-    .clk                    (chipset_clk        ),
-    .rst                    (~rst_n             ),  
+    .clk		(chipset_clk),
+    .rst		(~rst_n),
 
-    .chip_id                (chip_id),
-    .x_id                   (x_id),
-    .y_id                   (y_id),    
+    .noc2_valid_in	(noc2_in_val),
+    .noc2_data_in	(noc2_in_data),
+    .noc2_ready_out	(noc2_in_rdy),
 
-    .bridge_splitter_val    (noc2_out_val          ),
-    .bridge_splitter_data   (noc2_out_data         ),
-    .splitter_bridge_rdy    (noc2_out_rdy          ), 
+    .noc2_valid_out	(noc2_out_val),
+    .noc2_data_out	(noc2_out_data),
+    .noc2_ready_in	(noc2_out_rdy),
+   
+    .noc3_valid_in	(noc3_in_val),
+    .noc3_data_in	(noc3_in_data),
+    .noc3_ready_out	(noc3_out_rdy),
 
-    .splitter_bridge_val    (noc3_in_val           ),
-    .splitter_bridge_data   (noc3_in_data          ),
-    .bridge_splitter_rdy    (noc3_in_rdy           ),   
+    .noc3_valid_out	(noc3_out_val),
+    .noc3_data_out	(noc3_out_data),
+    .noc3_ready_in	(noc3_in_rdy),
 
+    .src_chipid	(chip_id),
+    .src_xpos		(x_id),
+    .src_ypos		(y_id),
+    .src_fbits		(`NOC_FBITS_WIDTH'd0),
 
-    //axi lite signals
-    //write address channel
-    .axi_awaddr        (noc_axi_awaddr),
-    .axi_awvalid       (noc_axi_awvalid),
-    .axi_awready       (noc_axi_awready),
+    .dest_chipid(14'h0000),
+    .dest_xpos(8'h00),
+    .dest_ypos(8'h00),
+    .dest_fbits(4'h2),
 
-    //write data channel
-    .axi_wdata         (noc_axi_wdata),
-    .axi_wstrb         (noc_axi_wstrb),
-    .axi_wvalid        (noc_axi_wvalid),
-    .axi_wready        (noc_axi_wready),
+    // AXI Write Address Channel Signals
+    .m_axi_awaddr	(noc_axi_awaddr),
+    .m_axi_awvalid	(noc_axi_awvalid),
+    .m_axi_awready	(noc_axi_awready),
 
-    //read address channel
-    .axi_araddr        (noc_axi_araddr),
-    .axi_arvalid       (noc_axi_arvalid),
-    .axi_arready       (noc_axi_arready),
+    // AXI Write Data Channel Signals
+    .m_axi_wdata	(noc_axi_wdata),
+    .m_axi_wstrb	(noc_axi_wstrb),
+    .m_axi_wvalid	(noc_axi_wvalid),
+    .m_axi_wready	(noc_axi_wready),
 
-    //read data channel
-    .axi_rdata         (noc_axi_rdata),
-    .axi_rresp         (noc_axi_rresp),
-    .axi_rvalid        (noc_axi_rvalid),
-    .axi_rready        (noc_axi_rready),
+    // AXI Read Address Channel Signals
+    .m_axi_araddr	(noc_axi_araddr),
+    .m_axi_arvalid	(noc_axi_arvalid),
+    .m_axi_arready	(noc_axi_arready),
 
-    //write response channel
-    .axi_bresp         (noc_axi_bresp),
-    .axi_bvalid        (noc_axi_bvalid),
-    .axi_bready        (noc_axi_bready)
+    // AXI Read Data Channel Signals
+    .m_axi_rdata	(noc_axi_rdata),
+    .m_axi_rresp	(noc_axi_rresp),
+    .m_axi_rvalid	(noc_axi_rvalid),
+    .m_axi_rready	(noc_axi_rready),
+
+    // AXI Write Response Channel Signals
+    .m_axi_bresp	(noc_axi_bresp),
+    .m_axi_bvalid	(noc_axi_bvalid),
+    .m_axi_bready	(noc_axi_bready)
 );
 
 

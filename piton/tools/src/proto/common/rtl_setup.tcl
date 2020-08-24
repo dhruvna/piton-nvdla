@@ -491,9 +491,9 @@ set CHIP_RTL_IMPL_FILES [list \
     "${DV_ROOT}/design/chip/tile/ariane/src/rv_plic/rtl/rv_plic_gateway.sv"                   \
     "${DV_ROOT}/design/chip/tile/ariane/src/rv_plic/rtl/plic_regmap.sv"                       \
     "${DV_ROOT}/design/chip/tile/ariane/src/rv_plic/rtl/plic_top.sv"                          \
-    "${DV_ROOT}/design/chip/tile/ariane/fpga/src/axi2apb/src/axi2apb_wrap.sv"                 \
-    "${DV_ROOT}/design/chip/tile/ariane/fpga/src/axi2apb/src/axi2apb.sv"                      \
-    "${DV_ROOT}/design/chip/tile/ariane/fpga/src/axi2apb/src/axi2apb_64_32.sv"                \
+#    "${DV_ROOT}/design/chip/tile/ariane/fpga/src/axi2apb/src/axi2apb_wrap.sv"                 \
+#    "${DV_ROOT}/design/chip/tile/ariane/fpga/src/axi2apb/src/axi2apb.sv"                      \
+#    "${DV_ROOT}/design/chip/tile/ariane/fpga/src/axi2apb/src/axi2apb_64_32.sv"                \
     "${DV_ROOT}/design/chip/tile/ariane/fpga/src/axi_slice/src/axi_w_buffer.sv"               \
     "${DV_ROOT}/design/chip/tile/ariane/fpga/src/axi_slice/src/axi_b_buffer.sv"               \
     "${DV_ROOT}/design/chip/tile/ariane/fpga/src/axi_slice/src/axi_slice_wrap.sv"             \
@@ -859,7 +859,13 @@ set CHIPSET_RTL_IMPL_FILES [list \
     "${DV_ROOT}/design/common/fpga_bridge/fpga_send/rtl/fpga_bridge_send_32.v" \
     "${DV_ROOT}/design/common/fpga_bridge/fpga_rcv/rtl/fpga_bridge_rcv_32.v" \
     "${DV_ROOT}/design/chipset/accelerators/rtl/nvlink_top.v" \
-    "${DV_ROOT}/design/chipset/accelerators/rtl/axi2apb.v" \
+    "${DV_ROOT}/design/chipset/accelerators/rtl/axi2apb.v"                      \
+    "${DV_ROOT}/design/chipset/accelerators/rtl/axi2apb_cmd.v"                \
+    "${DV_ROOT}/design/chipset/accelerators/rtl/axi2apb_ctrl.v"               \
+    "${DV_ROOT}/design/chipset/accelerators/rtl/axi2apb_mux.v"               \
+    "${DV_ROOT}/design/chipset/accelerators/rtl/axi2apb_rd.v"             \
+    "${DV_ROOT}/design/chipset/accelerators/rtl/axi2apb_wr.v"                  \
+    "${DV_ROOT}/design/chipset/accelerators/rtl/prgen_fifo.v"           \
     "${DV_ROOT}/design/chipset/mem_io_splitter/rtl/mem_io_splitter.v" \
     "${DV_ROOT}/design/chipset/mem_io_splitter/rtl/iob_splitter.v" \
     "${DV_ROOT}/design/chipset/mem_io_splitter/rtl/uart_boot_splitter.v" \
