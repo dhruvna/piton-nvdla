@@ -1,10 +1,11 @@
 `include "define.tmp.h"
 
 `define C_M_AXI_LITE_DATA_WIDTH  `NOC_DATA_WIDTH
-`define C_M_AXI_LITE_ADDR_WIDTH  `NOC_DATA_WIDTH
+`define C_M_AXI_LITE_ADDR_WIDTH  64
 `define C_M_AXI_LITE_RESP_WIDTH  2
 // this is non-standard
 `define C_M_AXI_LITE_SIZE_WIDTH  3
+`define NOC2_FLIT_STATE_WIDTH    3
 
 module axilite_noc_bridge #(
     parameter AXI_LITE_DATA_WIDTH = 512
@@ -126,6 +127,36 @@ wire                                    araddr_fifo_empty;
 wire [`C_M_AXI_LITE_ADDR_WIDTH-1:0]     araddr_fifo_out;
 reg                                     araddr_fifo_ren;
 
+//Start-Addition Sanzhar
+reg [4:0]				r_req_size; //its size equals to the size of the araddr fifo
+reg r_req_state;
+localparam 	ARFIFO_NOT_FULL = 1'd0,
+		ARFIFO_FULL  = 1'd1;
+always @(posedge clk)
+begin
+    if (rst) begin
+        r_req_state <= ARFIFO_NOT_FULL;
+        r_req_size  <= 0;
+    end
+    else begin
+    	case (r_req_state)
+    	    ARFIFO_NOT_FULL: begin
+    	    	if (araddr_fifo_full)
+    	    	    r_req_state <= ARFIFO_FULL;
+    	    	else if (m_axi_arvalid)
+    	    	    r_req_size <= r_req_size + 1;
+    	    	else if (m_axi_rvalid)
+    	    	    r_req_size <= r_req_size - 1;
+    	    end
+    	    ARFIFO_FULL: begin
+    	        if (araddr_fifo_empty)
+    	            r_req_state <= ARFIFO_NOT_FULL;
+    	    end
+    	endcase
+    end
+end
+//End-Addition Sanzhar
+
 
 /* Dump store addr and data to file. */
 integer file;
@@ -218,7 +249,8 @@ noc_response_axilite #(
     .m_axi_bvalid(),
     .m_axi_bready(1'b1),
     .w_reqbuf_size(),
-    .r_reqbuf_size()
+    .r_reqbuf_size(),
+    .r_req_size(r_req_size) //Addition Sanzhar
 );
 
 
@@ -227,7 +259,7 @@ assign noc3_ready_out = 1'b1;
 assign write_channel_ready = !awaddr_fifo_full && !wdata_fifo_full;
 assign m_axi_awready = write_channel_ready && !type_fifo_full;
 assign m_axi_wready = write_channel_ready && !type_fifo_full;
-assign m_axi_arready = !araddr_fifo_full && !type_fifo_full;
+assign m_axi_arready = !araddr_fifo_full && !type_fifo_full && (m_axi_arvalid || r_req_size == 0);
 
 assign axi2noc_msg_type_store = m_axi_awvalid && m_axi_wvalid;
 assign axi2noc_msg_type_load = m_axi_arvalid;
@@ -251,7 +283,7 @@ sync_fifo #(
 	.reset(rst)
 );
 
-assign type_fifo_wval = (axi2noc_msg_type_store ||axi2noc_msg_type_load) && !type_fifo_full;
+assign type_fifo_wval = (axi2noc_msg_type_store ||axi2noc_msg_type_load) && type_fifo_empty;
 assign type_fifo_wdata = (axi2noc_msg_type_store) ? `MSG_TYPE_STORE :
                             (axi2noc_msg_type_load) ? `MSG_TYPE_LOAD : `MSG_TYPE_INVAL;
 //assign type_fifo_ren = (flit_state == `MSG_STATE_INVALID) && !type_fifo_empty;
@@ -330,6 +362,7 @@ assign araddr_fifo_ren = (noc_load_done && !araddr_fifo_empty);
 `define MSG_STATE_IDLE          2'd0
 `define MSG_STATE_HEADER        2'd1
 `define MSG_STATE_NOC_DATA      2'd2
+`define MSG_STATE_NOC_ARRV      2'd3
 
 wire                                    fifo_has_packet;
 wire                                    noc_store_done;
@@ -415,16 +448,11 @@ begin
     end
 end
 
-//change
-reg [4:0] count;
-`define MSG_STATE_WAIT      2'd3
-//change end
-
+reg [4:0] counter;
 always @(posedge clk)
 begin
     if (rst) begin
         flit_state <= `MSG_STATE_IDLE;
-        count <= 0;
     end
     else begin
         case (flit_state)
@@ -437,22 +465,19 @@ begin
                 if (noc_last_header && type_fifo_out == `MSG_TYPE_STORE)
                     flit_state <= `MSG_STATE_NOC_DATA;
                 else if (noc_load_done)
-                    flit_state <= `MSG_STATE_WAIT;
+                    flit_state <= `MSG_STATE_NOC_ARRV;
             end
 
             `MSG_STATE_NOC_DATA: begin
                 if (noc_store_done)
                     flit_state <= `MSG_STATE_IDLE;
             end
-            //Change
-            `MSG_STATE_WAIT: begin
-            	count <= count + 1;
-            	if (count==20) begin
-            		count <= 0;
-            		flit_state <= `MSG_STATE_IDLE;
-    		end
+            //FOR NVDLA
+            `MSG_STATE_NOC_ARRV: begin
+            	counter <= counter + 1;
+            	if (counter == 31)
+                    flit_state <= `MSG_STATE_IDLE;
             end
-            //Change end
         endcase
     end
 end
@@ -510,5 +535,6 @@ end
 
 assign noc2_valid_out = flit_ready;
 assign noc2_data_out = flit;
+
 
 endmodule

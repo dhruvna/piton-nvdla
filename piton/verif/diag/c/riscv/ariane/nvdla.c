@@ -389,7 +389,7 @@ int main(void)
     // CDP_D_DATOUT_OFFSET_0.DATOUT_OFFSET:0x80
     reg_write(CDP_D_DST_SURFACE_STRIDE, 0x800);
     // CDP_D_DST_SURFACE_STRIDE_0.DST_SURFACE_STRIDE:0x40
-    reg_write(CDP_RDMA_D_SRC_BASE_ADDR_LOW, 0x90000000);
+    reg_write(CDP_RDMA_D_SRC_BASE_ADDR_LOW, 0x80000000);
     // CDP_RDMA_D_SRC_BASE_ADDR_LOW_0.SRC_BASE_ADDR_LOW:0x4000000
     reg_write(CDP_D_DST_DMA_CFG, 0x1);
     // CDP_D_DST_DMA_CFG_0.DST_RAM_TYPE:MC : 0x1
@@ -429,7 +429,7 @@ int main(void)
     reg_write(CDP_D_FUNC_BYPASS, 0x3);
     // CDP_D_FUNC_BYPASS_0.SQSUM_BYPASS:ENABLE : 0x1
     // CDP_D_FUNC_BYPASS_0.MUL_BYPASS:ENABLE : 0x1
-    reg_write(CDP_D_DST_BASE_ADDR_LOW, 0x90080000);
+    reg_write(CDP_D_DST_BASE_ADDR_LOW, 0x80080000);
     // CDP_D_DST_BASE_ADDR_LOW_0.DST_BASE_ADDR_LOW:0x4004000
     reg_write(CDP_RDMA_D_SRC_SURFACE_STRIDE, 0x800);
     // CDP_RDMA_D_SRC_SURFACE_STRIDE_0.SRC_SURFACE_STRIDE:0x40
@@ -442,10 +442,11 @@ int main(void)
     //----------## Layer:CDP_0: configuraion, end----------
     //----------## Layer:CDP_0: operation enable, begin----------
     //----------#### Layer:CDP_0: operation enable, block:NVDLA_CDP_RDMA, begin --
-    reg_write(CDP_RDMA_D_OP_ENABLE,0x1);
+
     //----------#### Layer:CDP_0: operation enable, block:NVDLA_CDP_RDMA, end   --
     //----------#### Layer:CDP_0: operation enable, block:NVDLA_CDP, begin --
     reg_write(CDP_D_OP_ENABLE,0x1);
+    reg_write(CDP_RDMA_D_OP_ENABLE,0x1);
     //----------#### Layer:CDP_0: operation enable, block:NVDLA_CDP, end   --
     //----------## Layer:CDP_0: operation enable, end----------
 

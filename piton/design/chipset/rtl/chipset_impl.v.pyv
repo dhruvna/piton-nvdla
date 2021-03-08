@@ -1119,7 +1119,7 @@ fake_uart fake_uart (
 <%
 for i in range(1, len(devices)):
     if devices[i]["name"] == "nvlink":
-        print '''
+        print('''
 nvlink_top  nvlink_top (
     //General signals
     .chipset_clk            (chipset_clk          ),
@@ -1148,7 +1148,7 @@ nvlink_top  nvlink_top (
     .noc3_out_rdy             (buf_nvlink_noc3_ready   )
 
 
-);''' % (devices[i]["portnum"])
+);''' % (devices[i]["portnum"]))
 %>
 
 

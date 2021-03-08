@@ -333,9 +333,9 @@ axi2apb axi2apb_nvlink (
 
 axilite_noc_bridge #(
     .AXI_LITE_DATA_WIDTH (64)
-)  nvlink_noc_bridge (
+) nvlink_noc_bridge (
     .clk		(chipset_clk),
-    .rst		(~rst_n),
+    .rst		(~rst_n ),
 
     .noc2_valid_in	(noc2_in_val),
     .noc2_data_in	(noc2_in_data),
@@ -356,12 +356,12 @@ axilite_noc_bridge #(
     .src_chipid	(chip_id),
     .src_xpos		(x_id),
     .src_ypos		(y_id),
-    .src_fbits		(`NOC_FBITS_WIDTH'd0),
+    .src_fbits		(4'b0),
 
-    .dest_chipid(14'h0000),
-    .dest_xpos(8'h00),
-    .dest_ypos(8'h00),
-    .dest_fbits(4'h2),
+    .dest_chipid	(chip_id),
+    .dest_xpos		(x_id),
+    .dest_ypos		(y_id),
+    .dest_fbits	(`NOC_FBITS_MEM),
 
     // AXI Write Address Channel Signals
     .m_axi_awaddr	(noc_axi_awaddr),
@@ -390,6 +390,7 @@ axilite_noc_bridge #(
     .m_axi_bvalid	(noc_axi_bvalid),
     .m_axi_bready	(noc_axi_bready)
 );
+
 
 
 
@@ -439,7 +440,7 @@ NV_NVDLA_wrapper  NV_NVDLA_nvlink (
 				   
     .nvdla_core2dbb_rvalid             ( noc_axi_rvalid ),
     .nvdla_core2dbb_rready             ( noc_axi_rready ),
-    .nvdla_core2dbb_rid                ( blank_id ),
+    .nvdla_core2dbb_rid                ( 8'd3 ),
     .nvdla_core2dbb_rlast              ( blank_last ),
     .nvdla_core2dbb_rdata              ( noc_axi_rdata ),
     .nvdla_core2dbb_rresp              ( noc_axi_rresp ),

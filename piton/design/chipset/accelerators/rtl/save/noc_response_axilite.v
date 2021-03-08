@@ -4,6 +4,9 @@ noc data width*/
 
 `include "define.tmp.h"
 
+`define C_M_AXI_LITE_ADDR_WIDTH  64
+`define C_M_AXI_LITE_RESP_WIDTH  2
+
 module noc_response_axilite #(
     parameter SLAVE_RESP_BYTEWIDTH = 4,
     parameter SWAP_ENDIANESS       = 0,
@@ -38,7 +41,10 @@ module noc_response_axilite #(
 
     // this does not belong to axi lite and is non-standard
     output  reg  [`C_M_AXI_LITE_SIZE_WIDTH-1:0]   w_reqbuf_size,
-    output  reg  [`C_M_AXI_LITE_SIZE_WIDTH-1:0]   r_reqbuf_size
+    output  reg  [`C_M_AXI_LITE_SIZE_WIDTH-1:0]   r_reqbuf_size,
+    
+    // number of back-to-back requests
+    input wire [4:0]				    r_req_size		//Addition Sanzhar			 
 );
 
 //==============================================================================
@@ -168,6 +174,32 @@ reg  [2:0]                   msg_state_next;
 reg  [`MSG_LENGTH_WIDTH-1:0] msg_payload_len;
 reg  [`MSG_LENGTH_WIDTH-1:0] msg_counter;
 
+//Start - Addition Sanzhar
+reg [4:0]		      wval_counter; //its size is equal to the size of r_req_size
+reg r_state;
+
+
+always @(posedge clk)
+begin
+    if (rst) begin
+    	r_state <= 0;
+    	wval_counter <= 0;
+    end
+    else if (!r_state) begin
+    	if (wval_counter == r_req_size)
+    	    r_state <= 1;
+    	else if (wval)
+    	    wval_counter <= wval_counter + 1;
+    end
+    else begin
+     	if (wval_counter == 0)
+   	    r_state <= 0;
+     	else if (!empty && m_axi_rready)
+   	    wval_counter <= wval_counter - 1;
+    end
+end
+//End - Addition Sanzhar
+
 
 // Should we read data from noc_data_in?
 assign noc_io_go = noc_valid_in && noc_ready_out;
@@ -250,19 +282,22 @@ sync_fifo #(
 );
 
 assign noc_ready_out = !full;
-assign ren = (!empty && m_axi_rready);
+assign ren = (!empty && m_axi_rready && r_state);
 
 generate
     if (AXI_LITE_DATA_WIDTH == `NOC_DATA_WIDTH) begin
         always @(posedge clk)
         begin
             if (rst) begin
-                wval <= 
+                wval <= 1'b0;
                 wdata <= {AXI_LITE_DATA_WIDTH{1'b0}};
             end
             else begin
-                wval <= (msg_state_f == MSG_STATE_DATA && noc_io_go && !full);
-                wdata <= noc_data_in;
+                wval <= 1'b0;
+                if (msg_data_done) begin
+                    wval <= (msg_state_f == MSG_STATE_DATA && noc_io_go && !full);
+                    wdata <= noc_data_in;
+                end
             end
         end        
     end
