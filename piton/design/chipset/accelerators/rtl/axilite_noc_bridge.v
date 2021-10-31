@@ -1,11 +1,5 @@
 `include "define.tmp.h"
 
-`define C_M_AXI_LITE_DATA_WIDTH  `NOC_DATA_WIDTH
-`define C_M_AXI_LITE_ADDR_WIDTH  `NOC_DATA_WIDTH
-`define C_M_AXI_LITE_RESP_WIDTH  2
-// this is non-standard
-`define C_M_AXI_LITE_SIZE_WIDTH  3
-
 module axilite_noc_bridge #(
     parameter AXI_LITE_DATA_WIDTH = 512
 ) (
@@ -415,16 +409,10 @@ begin
     end
 end
 
-//change
-reg [4:0] count;
-`define MSG_STATE_WAIT      2'd3
-//change end
-
 always @(posedge clk)
 begin
     if (rst) begin
         flit_state <= `MSG_STATE_IDLE;
-        count <= 0;
     end
     else begin
         case (flit_state)
@@ -437,22 +425,13 @@ begin
                 if (noc_last_header && type_fifo_out == `MSG_TYPE_STORE)
                     flit_state <= `MSG_STATE_NOC_DATA;
                 else if (noc_load_done)
-                    flit_state <= `MSG_STATE_WAIT;
+                    flit_state <= `MSG_STATE_IDLE;
             end
 
             `MSG_STATE_NOC_DATA: begin
                 if (noc_store_done)
                     flit_state <= `MSG_STATE_IDLE;
             end
-            //Change
-            `MSG_STATE_WAIT: begin
-            	count <= count + 1;
-            	if (count==20) begin
-            		count <= 0;
-            		flit_state <= `MSG_STATE_IDLE;
-    		end
-            end
-            //Change end
         endcase
     end
 end
