@@ -1,4 +1,10 @@
 `include "define.tmp.h"
+`define C_M_AXI_LITE_ADDR_WIDTH  `NOC_DATA_WIDTH
+`define C_M_AXI_LITE_DATA_WIDTH  `NOC_DATA_WIDTH
+`define C_M_AXI_LITE_ADDR_WIDTH  `NOC_DATA_WIDTH
+`define C_M_AXI_LITE_RESP_WIDTH  2
+// this is non-standard
+`define C_M_AXI_LITE_SIZE_WIDTH  3
 
 module axilite_noc_bridge #(
     parameter AXI_LITE_DATA_WIDTH = 512
