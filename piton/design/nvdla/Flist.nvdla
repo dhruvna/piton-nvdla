@@ -315,4 +315,6 @@ hw/outdir/nv_small/vmod/nvdla/sdp/NV_NVDLA_SDP_HLS_sync2data.v
 hw/outdir/nv_small/vmod/vlibs/NV_NVDLA_HLS_shiftleftsu.v
 hw/outdir/nv_small/vmod/vlibs/NV_NVDLA_HLS_shiftrightsatsu.v
 
+hw/vmod/vlibs/nv_assert_no_x.vlib
+hw/vmod/vlibs/RANDFUNC.vlib
 
