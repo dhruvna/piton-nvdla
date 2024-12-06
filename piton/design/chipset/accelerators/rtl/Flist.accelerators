@@ -32,8 +32,10 @@
 //bram_map.v
 //ciop_iob.v
 nvlink_top.v
-axilite_noc_bridge.v
-noc_response_axilite.v
+//axilite_noc_bridge.v
+//noc_response_axilite.v
+axi_noc_bridge.sv
+noc_response_axi.sv
 axi2apb.v
 axi2apb_cmd.v
 axi2apb_ctrl.v

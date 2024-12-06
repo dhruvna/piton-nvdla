@@ -32,6 +32,7 @@
 // Created:         1/13/2020
 //--------------------------------------------------
 
+`include "noc_macros.vh"
 module nvlink_top #(
     parameter AXI_ADDR_WIDTH   = 32,
     parameter AXI_DATA_WIDTH   = 32,
@@ -331,8 +332,13 @@ axi2apb axi2apb_nvlink (
 //AXILITE --> CPU
 //This bridge does not fully work.
 
-axilite_noc_bridge #(
-    .AXI_LITE_DATA_WIDTH (64)
+// axilite_noc_bridge #(
+//     .AXI_LITE_DATA_WIDTH (64)
+// ) 
+
+axi_noc_bridge #(
+    .AXI_DATA_WIDTH(64),
+    .AXI_ADDR_WIDTH(64)  
 ) nvlink_noc_bridge (
     .clk		(chipset_clk),
     .rst		(~rst_n ),
