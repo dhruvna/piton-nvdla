@@ -107,6 +107,8 @@ module axi_noc_bridge #(
 localparam MSG_TYPE_INVAL          = 2'd0; // Invalid Message
 localparam MSG_TYPE_LOAD           = 2'd1; // Load Request
 localparam MSG_TYPE_STORE          = 2'd2; // Store Request
+localparam MSG_TYPE_NC_STORE_REQ       = 8'd15; 
+localparam MSG_TYPE_NC_LOAD_REQ        = 8'd14;
 
 localparam MIN_NOC_DATA_WIDTH      = 64; // 8 Bytes
 localparam NOC_HDR_LEN             = 3;
@@ -303,7 +305,10 @@ logic outstanding_store_req;
     noc_response_axi #(
         `ifdef ARA_REQ2MEM
           .AXI_DATA_WIDTH(AXI_DATA_WIDTH),
-          .AXI_RESP_WIDTH(2)
+          .AXI_RESP_WIDTH(2),
+          .MSG_TYPE_INVAL(MSG_TYPE_INVAL), 
+          .MSG_TYPE_STORE(MSG_TYPE_NC_STORE_REQ), 
+          .MSG_TYPE_LOAD(MSG_TYPE_NC_LOAD_REQ)
         `else 
           .AXI_DATA_WIDTH(AXI_DATA_WIDTH),
           .AXI_RESP_WIDTH(2),
