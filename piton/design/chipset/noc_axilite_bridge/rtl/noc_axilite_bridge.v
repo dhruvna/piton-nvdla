@@ -398,7 +398,7 @@ localparam STORE_ACK = 1'd1;
     end
 
     generate
-        if (SWAP_ENDIANESS) begin
+        if (SWAP_ENDIANESS) begin: write_endianess_swap_logic
             initial begin : p_endianess_check
               if (!(`C_M_AXI_LITE_DATA_WIDTH == 64 && `NOC_DATA_WIDTH == 64))
                   $fatal(1,"swapped endianess only works for 64bit NOC and AXI bus");
@@ -413,7 +413,7 @@ localparam STORE_ACK = 1'd1;
             assign m_axi_wdata[16 +: 8] = m_axi_wdata_tmp[40 +: 8];
             assign m_axi_wdata[ 8 +: 8] = m_axi_wdata_tmp[48 +: 8];
             assign m_axi_wdata[ 0 +: 8] = m_axi_wdata_tmp[56 +: 8];
-        end else begin
+        end else begin: no_write_endianess_swap_logic
             assign m_axi_wdata = m_axi_wdata_tmp;
         end
     endgenerate
@@ -464,11 +464,11 @@ localparam STORE_ACK = 1'd1;
 
     // Shift AXI read data over so that the desired data is at the lowest bits
     generate
-      if (ALIGN_RDATA) begin
+      if (ALIGN_RDATA) begin: align_rdata_logic
         always @( * ) begin
             a_axi_rdata_shifted = (m_axi_rdata >> {m_axi_araddr[2:0], 3'b000});
         end
-      end else begin
+      end else begin: no_align_logic
         always @( * ) begin
             a_axi_rdata_shifted = m_axi_rdata;
         end
@@ -478,7 +478,7 @@ localparam STORE_ACK = 1'd1;
     reg  [`NOC_DATA_WIDTH-1:0]   a_axi_rdata_masked_tmp;
 
     generate
-      if (SLAVE_RESP_BYTEWIDTH <= 0) begin
+      if (SLAVE_RESP_BYTEWIDTH <= 0) begin: slave_resp_bytewidth_logic
         // Select and clone the desired bytes
         always @( * ) begin
             case (r_req_buf_header1_f[`MSG_DATA_SIZE_])
@@ -508,28 +508,28 @@ localparam STORE_ACK = 1'd1;
                 end
             endcase
         end
-      end else if (SLAVE_RESP_BYTEWIDTH == 1) begin
+      end else if (SLAVE_RESP_BYTEWIDTH == 1) begin: resp_bytewidth_1_logic
           always @( * ) begin
               a_axi_rdata_masked_tmp = {8{m_axi_rdata[7:0]}};
               r_reqbuf_size          = 3'b00;
 
           end
-      end else if (SLAVE_RESP_BYTEWIDTH == 2) begin
+      end else if (SLAVE_RESP_BYTEWIDTH == 2) begin: resp_bytewidth_2_logic
           always @( * ) begin
               a_axi_rdata_masked_tmp = {4{m_axi_rdata[15:0]}};
               r_reqbuf_size          = 3'b01;
           end
-      end else if (SLAVE_RESP_BYTEWIDTH == 4) begin
+      end else if (SLAVE_RESP_BYTEWIDTH == 4) begin: resp_bytewidth_4_logic
           always @( * ) begin
               a_axi_rdata_masked_tmp = {2{m_axi_rdata[31:0]}};
               r_reqbuf_size          = 3'b10;
           end
-      end else if (SLAVE_RESP_BYTEWIDTH == 8) begin
+      end else if (SLAVE_RESP_BYTEWIDTH == 8) begin: resp_bytewidth_8_logic
           always @( * ) begin
               a_axi_rdata_masked_tmp = m_axi_rdata;
               r_reqbuf_size          = 3'b11;
           end
-      end else begin
+      end else begin: default_resp_bytewidth_logic
           always @( * ) begin
               a_axi_rdata_masked_tmp = m_axi_rdata;
               r_reqbuf_size          = 3'b11;
@@ -538,7 +538,7 @@ localparam STORE_ACK = 1'd1;
     endgenerate
 
     generate
-        if (SWAP_ENDIANESS) begin
+        if (SWAP_ENDIANESS) begin: read_endianess_swap_logic
             assign a_axi_rdata_masked[56 +: 8] = a_axi_rdata_masked_tmp[ 0 +: 8];
             assign a_axi_rdata_masked[48 +: 8] = a_axi_rdata_masked_tmp[ 8 +: 8];
             assign a_axi_rdata_masked[40 +: 8] = a_axi_rdata_masked_tmp[16 +: 8];
@@ -547,7 +547,7 @@ localparam STORE_ACK = 1'd1;
             assign a_axi_rdata_masked[16 +: 8] = a_axi_rdata_masked_tmp[40 +: 8];
             assign a_axi_rdata_masked[ 8 +: 8] = a_axi_rdata_masked_tmp[48 +: 8];
             assign a_axi_rdata_masked[ 0 +: 8] = a_axi_rdata_masked_tmp[56 +: 8];
-        end else begin
+        end else begin: no_read_endianess_swap_logic
             assign a_axi_rdata_masked = a_axi_rdata_masked_tmp;
         end
     endgenerate

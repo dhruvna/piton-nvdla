@@ -317,4 +317,5 @@ hw/outdir/nv_small/vmod/vlibs/NV_NVDLA_HLS_shiftrightsatsu.v
 
 hw/vmod/vlibs/nv_assert_no_x.vlib
 hw/vmod/vlibs/RANDFUNC.vlib
-
+hw/vmod/vlibs/nv_assert_no_x.vlib
+hw/vmod/vlibs/RANDFUNC.vlib

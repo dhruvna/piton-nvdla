@@ -3,3 +3,4 @@
 `define MSG_AMO_MASK1_  16
 `define MSG_AMO_MASK1_WIDTH 16
 `define C_M_AXI_LITE_SIZE_WIDTH 3
+`define WSTRB 64

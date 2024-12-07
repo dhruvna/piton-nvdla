@@ -409,7 +409,7 @@ assign awaddr_fifo_wval = m_axi_awvalid && m_axi_awready;
 assign awaddr_fifo_wdata = m_axi_awaddr;
 assign waddr_aligned_with_16B = (type_fifo_out == MSG_TYPE_STORE) ? (~awaddr_buffer_q[3] && ~awaddr_buffer_q[2] && ~awaddr_buffer_q[1] && ~awaddr_buffer_q[0]) &&  (awsize_buffer_q == AX_SIZE_8B): 0;
 
-if (AXI_DATA_WIDTH == MIN_NOC_DATA_WIDTH) begin 
+if (AXI_DATA_WIDTH == MIN_NOC_DATA_WIDTH) begin: axi_data_width_logic
     assign awaddr_fifo_ren = ((outstanding_store_req && ~outstanding_store_req_d) && !awaddr_fifo_empty && ((awlen_buffer_q <= 2 && waddr_aligned_with_16B) || (awlen_buffer_q == 1)));
     assign write_word_select = (awaddr_buffer_q[3]) ? 1 : 0; 
 
@@ -460,7 +460,7 @@ assign wdata_fifo_out = {<<8{wdata_fifo_out_buffer}};
 assign wdata_fifo_wval = m_axi_wvalid && m_axi_wready;
 assign wdata_fifo_wdata = m_axi_wdata;
 
-if (AXI_DATA_WIDTH == MIN_NOC_DATA_WIDTH)
+if (AXI_DATA_WIDTH == MIN_NOC_DATA_WIDTH) begin: wdata_fifo_logic_aligned 
     always_comb begin 
         if (flit_state_f == MSG_STATE_NOC_DATA && noc_ready_in && !wdata_fifo_empty) begin 
             if (waddr_aligned_with_16B && (awlen_buffer_q >= 2)) begin
@@ -471,9 +471,9 @@ if (AXI_DATA_WIDTH == MIN_NOC_DATA_WIDTH)
             end 
         end 
         else wdata_fifo_ren = 0;
-    end 
-else begin 
-    always_comb begin 
+    end
+end else begin 
+    always_comb begin: wdata_fifo_logic_unaligned
         wdata_fifo_ren = noc_store_done; 
     end 
 end
@@ -499,7 +499,7 @@ assign awlen_fifo_wdata = m_axi_awlen;
 assign need_split_w_transaction = (awlen_buffer_q > 0);
 assign awlen_fifo_ren = ((outstanding_store_req && ~outstanding_store_req_d) && !awlen_fifo_empty && last_write_transfer);
 
-if (AXI_DATA_WIDTH == MIN_NOC_DATA_WIDTH) begin 
+if (AXI_DATA_WIDTH == MIN_NOC_DATA_WIDTH) begin: awlen_buffer_logic_aligned 
     assign last_write_transfer = (awlen_buffer_q == 1) || (awlen_buffer_q == 2 && waddr_aligned_with_16B);
     always_comb begin 
         if ((flit_state_f == MSG_STATE_IDLE) && (awlen_buffer_q == 0) && fifo_has_packet && (type_fifo_out == MSG_TYPE_STORE)) awlen_buffer_d = awlen_fifo_out + 1; // no beat left, next transaction
@@ -570,7 +570,7 @@ sync_fifo #(
         .reset(fifo_rst)
 );
 
-if (AXI_DATA_WIDTH == MIN_NOC_DATA_WIDTH) begin
+if (AXI_DATA_WIDTH == MIN_NOC_DATA_WIDTH) begin: wstrb_fifo_logic_aligned
     always_comb begin 
             if ((flit_state_f == MSG_STATE_HEADER && noc_ready_in && (!wstrb_fifo_empty))) begin
                 if (waddr_aligned_with_16B && (awlen_buffer_q >= 2)) begin 
@@ -612,7 +612,7 @@ assign arlen_fifo_wdata = m_axi_arlen;
 assign need_split_r_transaction = (arlen_buffer_q > 0);
 assign arlen_fifo_ren = ((outstanding_load_req && ~outstanding_load_req_d) && !arlen_fifo_empty && last_read_transfer); 
 
-if (AXI_DATA_WIDTH == MIN_NOC_DATA_WIDTH) begin
+if (AXI_DATA_WIDTH == MIN_NOC_DATA_WIDTH) begin: arlen_buffer_logic_aligned
     assign read_word_select = (araddr_buffer_q[3] == 1) ? 1 : 0; 
     assign last_read_transfer = ((arlen_buffer_q == 2) && raddr_aligned_with_16B) || (arlen_buffer_q == 1);
     assign read_size = (arlen_buffer_q >= 2) && raddr_aligned_with_16B; // 1 -> 16B, 0 -> 8B
@@ -693,7 +693,7 @@ assign araddr_fifo_wval = m_axi_arvalid && m_axi_arready;
 assign araddr_fifo_wdata = m_axi_araddr;
 assign araddr_fifo_ren = ((outstanding_load_req && ~outstanding_load_req_d)  && !araddr_fifo_empty && last_read_transfer);
 
-if (AXI_DATA_WIDTH == MIN_NOC_DATA_WIDTH) begin 
+if (AXI_DATA_WIDTH == MIN_NOC_DATA_WIDTH) begin: araddr_buffer_logic_aligned
     always_comb begin 
         if (flit_state_f == MSG_STATE_IDLE && !need_split_r_transaction && type_fifo_out == MSG_TYPE_LOAD) araddr_buffer_d = araddr_fifo_out;
         else if ((outstanding_load_req && ~outstanding_load_req_d)  && need_split_r_transaction ) araddr_buffer_d = (raddr_aligned_with_16B) ? araddr_buffer_q + (1 << (arsize_buffer_q + 1)) : araddr_buffer_q + (1 << (arsize_buffer_q)) ; 
