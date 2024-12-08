@@ -194,7 +194,7 @@ always_comb begin
                                 (noc_in_count_f == 0) && (noc_in_state_f == NOC_IN_STATE_READ_DATA); 
 end 
 
-if (AXI_DATA_WIDTH == 64) begin 
+if (AXI_DATA_WIDTH == 64) begin: rdata_fifo_wlogic
     always_comb begin 
         rdata_fifo_wdata = {valid_last_read_transfer, {<<8{noc_data_in}}};
 
