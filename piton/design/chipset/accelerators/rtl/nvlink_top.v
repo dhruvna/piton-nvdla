@@ -341,7 +341,7 @@ axi_noc_bridge #(
     .AXI_ADDR_WIDTH(64)  
 ) nvlink_noc_bridge (
     .clk		(chipset_clk),
-    //.rst		(~rst_n ),
+    .rst_n		(~rst_n ),
 
     //.noc2_valid_in	(noc2_in_val),
     //.noc2_data_in	(noc2_in_data),

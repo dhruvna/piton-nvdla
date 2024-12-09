@@ -15,8 +15,10 @@ int main(void)
     reg_write(CDP_S_POINTER, 0);
     reg_write(CDP_RDMA_S_POINTER, 0);
     //----------## Layer:CDP_0: set producer pointer, end----------
+    printf("LUT Programming Begin\n");
     //----------## Layer:CDP_0: LUT programming, begin----------
     reg_write(CDP_S_LUT_ACCESS_CFG, 0x30000);
+    printf("Starting Data Access 0x0\n");
     reg_write(CDP_S_LUT_ACCESS_DATA, 0x0);
     reg_write(CDP_S_LUT_ACCESS_DATA, 0x1);
     reg_write(CDP_S_LUT_ACCESS_DATA, 0x2);
@@ -33,6 +35,7 @@ int main(void)
     reg_write(CDP_S_LUT_ACCESS_DATA, 0xd);
     reg_write(CDP_S_LUT_ACCESS_DATA, 0xe);
     reg_write(CDP_S_LUT_ACCESS_DATA, 0xf);
+    printf("Starting Data Access 0x10\n");
     reg_write(CDP_S_LUT_ACCESS_DATA, 0x10);
     reg_write(CDP_S_LUT_ACCESS_DATA, 0x11);
     reg_write(CDP_S_LUT_ACCESS_DATA, 0x12);
@@ -98,6 +101,7 @@ int main(void)
     reg_write(CDP_S_LUT_ACCESS_DATA, 0x4e);
     reg_write(CDP_S_LUT_ACCESS_DATA, 0x4f);
     reg_write(CDP_S_LUT_ACCESS_DATA, 0x50);
+    printf("Starting Data Access 0x50\n");
     reg_write(CDP_S_LUT_ACCESS_DATA, 0x51);
     reg_write(CDP_S_LUT_ACCESS_DATA, 0x52);
     reg_write(CDP_S_LUT_ACCESS_DATA, 0x53);
@@ -177,6 +181,7 @@ int main(void)
     reg_write(CDP_S_LUT_ACCESS_DATA, 0x9d);
     reg_write(CDP_S_LUT_ACCESS_DATA, 0x9e);
     reg_write(CDP_S_LUT_ACCESS_DATA, 0x9f);
+    printf("Starting Data Access 0xa0\n");
     reg_write(CDP_S_LUT_ACCESS_DATA, 0xa0);
     reg_write(CDP_S_LUT_ACCESS_DATA, 0xa1);
     reg_write(CDP_S_LUT_ACCESS_DATA, 0xa2);
@@ -273,6 +278,7 @@ int main(void)
     reg_write(CDP_S_LUT_ACCESS_DATA, 0xfd);
     reg_write(CDP_S_LUT_ACCESS_DATA, 0xfe);
     reg_write(CDP_S_LUT_ACCESS_DATA, 0xff);
+    printf("Starting Data Access 0x100\n");
     reg_write(CDP_S_LUT_ACCESS_DATA, 0x100);
     reg_write(CDP_S_LUT_ACCESS_CFG, 0x20000);
     reg_write(CDP_S_LUT_ACCESS_DATA, 0x0);
@@ -340,6 +346,7 @@ int main(void)
     reg_write(CDP_S_LUT_ACCESS_DATA, 0x3e);
     reg_write(CDP_S_LUT_ACCESS_DATA, 0x3f);
     reg_write(CDP_S_LUT_ACCESS_DATA, 0x40);
+    printf("Start Low 0x0\n");
     reg_write(CDP_S_LUT_LE_START_LOW, 0x0);
     // CDP_S_LUT_LE_START_LOW_0.LUT_LE_START_LOW:0x0
     reg_write(CDP_S_LUT_LO_END_LOW, 0x100);
@@ -385,6 +392,7 @@ int main(void)
     // CDP_S_LUT_LO_SLOPE_SHIFT_0.LUT_LO_SLOPE_OFLOW_SHIFT:0x0
     //----------## Layer:CDP_0: LUT programming, end----------
     //----------## Layer:CDP_0: configuraion, begin----------
+    printf("Configuration Begin\n");
     reg_write(CDP_D_DATOUT_OFFSET, 0x80);
     // CDP_D_DATOUT_OFFSET_0.DATOUT_OFFSET:0x80
     reg_write(CDP_D_DST_SURFACE_STRIDE, 0x800);
@@ -439,6 +447,7 @@ int main(void)
     // CDP_RDMA_D_SRC_LINE_STRIDE_0.SRC_LINE_STRIDE:0x8
     reg_write(CDP_RDMA_D_DATA_CUBE_HEIGHT, 0x7);
     // CDP_RDMA_D_DATA_CUBE_HEIGHT_0.HEIGHT:0x7
+    printf("Configuration End\n");
     //----------## Layer:CDP_0: configuraion, end----------
     //----------## Layer:CDP_0: operation enable, begin----------
     //----------#### Layer:CDP_0: operation enable, block:NVDLA_CDP_RDMA, begin --
@@ -450,7 +459,9 @@ int main(void)
     //----------#### Layer:CDP_0: operation enable, block:NVDLA_CDP, end   --
     //----------## Layer:CDP_0: operation enable, end----------
 
-    while (reg_read(GLB_INTR_STATUS) == 0);
+    while (reg_read(GLB_INTR_STATUS) == 0) {
+        printf("GLB_INTR_STATUS: 0x%x\n", reg_read(GLB_INTR_STATUS));
+    }
 
     printf("TEST PASSED");
     

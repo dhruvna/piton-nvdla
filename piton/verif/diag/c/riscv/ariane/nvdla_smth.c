@@ -17,5 +17,6 @@ int main(int argc, char ** argv) {
   reg_write(CDP_RDMA_D_DATA_CUBE_HEIGHT, 0x7);
   unsigned int new = reg_read(CDP_RDMA_D_DATA_CUBE_HEIGHT);
   printf("New: %08x\n", new);
+  printf("TEST %sED\n", new == 0x7 ? "PASS" : "FAIL");
   return 0;
 }

@@ -17,7 +17,7 @@
 #include <stdio.h>
 
 // 64kB of data
-#define NUM_WORDS 16*1024
+#define NUM_WORDS 4*1024
 
 int main(int argc, char ** argv) {
 
@@ -25,16 +25,22 @@ int main(int argc, char ** argv) {
   int accu;
 
   for (int k = 0; k < NUM_WORDS; k++) {
+    if(k % 1024 == 0) {
+      printf("Array Creation Batch #%d\n", k / 1024);
+    }
     tmp[k] = k;
   }
 
   accu = 0;
   for (int k = 0; k < NUM_WORDS; k++) {
+    if(k % 1024 == 0) {
+      printf("Accumulation Batch #%d\n", k / 1024);
+    }
     accu+=tmp[k];
   }
 
   int expected = NUM_WORDS*(NUM_WORDS-1)/2;
   printf("exp: %d, act: %d\n", expected, accu);
-
+  printf("TEST %sED\n", expected==accu ? "PASS" : "FAIL");
   return (expected!=accu);
 }

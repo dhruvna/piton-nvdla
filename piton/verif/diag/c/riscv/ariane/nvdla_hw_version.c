@@ -12,6 +12,6 @@ int main(int argc, char ** argv) {
   const REAL_HW_VERSION = 0x00010001;
   reg_write(CFGROM_HW_VERSION, REAL_HW_VERSION + 1); //should not change
   unsigned int HW_VERSION = reg_read(CFGROM_HW_VERSION);
-  printf("TEST %sED\n", HW_VERSION == REAL_HW_VERSION ? "PASS" : "FAIL");
+  printf("TEST %sED, Version is: %x\n", HW_VERSION == REAL_HW_VERSION ? "PASS" : "FAIL", HW_VERSION);
   return 0;
 }
