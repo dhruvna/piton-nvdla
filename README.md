@@ -1,3 +1,11 @@
+A fork of the OpenPiton project used by Dhruv Aggarwal and Tim Qin to attempt integration of NVDLA into OpenPiton + Ariane.
+
+Our generated NVDLA hw files (outdir) is located within ```$PITON_ROON/piton/design/nvdla/outdir``` and the tree.make file we created to generate these files is ```$PITON_ROON/piton/design/nvdla/tree.make```
+
+Move these files into the hw submodule and build with the following command to reproduce our results:
+
+```sims -sys=manycore -x_tiles=1 -y_tiles=1 -vcs_build -ariane -config_rtl=ARA_REQ2MEM -config_rtl=PRAND_OFF -vcs_build_args="-v2k_generate"```
+
 ![OpenPiton Logo](/docs/openpiton_logo_black.png?raw=true)
 
 # OpenPiton Research Platform   [![Build Status](https://jenkins.princeton.edu/buildStatus/icon?job=cloud/piton_git_push_master)](https://jenkins.princeton.edu/job/cloud/job/piton_git_push_master/)
